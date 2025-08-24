@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Real Estate News - Inshorts Style (Automated)</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 600px; width: 100%; }
+    .card { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; padding: 20px; transition: box-shadow 0.3s ease; }
+    .card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .title { font-size: 18px; font-weight: 700; color: #212529; margin-bottom: 10px; }
+    .summary { font-size: 14px; color: #495057; margin-bottom: 15px; line-height: 1.5; }
+    .date { font-size: 12px; color: #868e96; }
+    .footer { font-size: 12px; color: #6c757d; border-top: 1px solid #dee2e6; padding-top: 12px; margin-top: 10px; }
+    .footer a { color: #0d6efd; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .error { color: #dc3545; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container" id="newsContainer"></div>
+<script>
+// Fallback stories (our existing collection)
+const fallbackCollection = [
+    {
+        title: "Welspun One Acquires 107 Acres in Bengaluru for Warehousing Expansion",
+        summary: "Welspun One Logistics Parks acquired 51 acres in Hoskote and 56 acres in Devanahalli, Bengaluru, with a $250 million investment to develop warehousing space serving multiple sectors.",
+        date: "2025-08-20",
+        links: [
+            { label: "Hindustan Times", url: "https://www.hindustantimes.com/real-estate/welspun-one-acquires-107-acres-in-bengaluru-to-expand-warehousing-footprint-in-south-india-101755704549777.html" },
+            { label: "Economic Times", url: "https://economictimes.com/industry/services/property-/-cstruction/welspun-one-acquires-107-acre-in-bengaluru-to-invest-rs-2150-crore/articleshow/123402165.cms" },
+            { label: "Business Standard", url: "https://www.business-standard.com/companies/news/welspun-one-acquires-107-acres-in-karnataka-for-warehousing-projects-125082000559_1.html" }
+        ],
+        notes: "Impacts South India's logistics; part of a broader strategy."
+    },
+    {
+        title: "Aawas Yojana Mission to Unlock Idle Housing Inventory",
+        summary: "Government initiative targeting ₹5 lakh crore of idle housing inventory by 2030, creating 1.5 crore jobs and generating ₹30,000 crore in revenues.",
+        date: "2025-08-24",
+        links: [
+            { label: "EIN Presswire", url: "https://www.einpresswire.com/calendar/2025/08/24" }
+        ],
+        notes: "Major policy affecting residential real estate nationwide."
+    }
+];
+
+// API configuration (replace with your key from newsapi.org)
+const apiKey = 'b2e5424f62294ae49339359f6c76a7a7'; // Paste your key here
+const query = 'real estate Bengaluru India'; // Customize as needed
+const baseUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&apiKey=${apiKey}&pageSize=5`;
+const apiUrl = `https://cors-anywhere.herokuapp.com/${baseUrl}`; // More reliable proxy for testing
+
+// Render function
+function renderNews(stories, isFallback = false) {
+    const container = document.getElementById('newsContainer');
+    container.innerHTML = isFallback ? '<p class="error">Using fallback data (API issue). Try refreshing or check your key!</p>' : '';
+    stories.forEach(story => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const linkHTML = story.links ? story.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join(' | ') : `<a href="${story.url}" target="_blank" rel="noopener">Read Full Article</a>`;
+        card.innerHTML = `
+            <div class="title">${story.title}</div>
+            <div class="summary">${story.summary || story.description || 'Summary not available.'}</div>
+            <div class="date">Date: ${story.date || story.publishedAt.split('T')[0]}</div>
+            <div class="footer">Sources: ${linkHTML}${story.notes ? ' | Notes: ' + story.notes : ''}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Fetch and render fresh news
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(data => {
+        if (data.articles && data.articles.length > 0) {
+            const formattedStories = data.articles.map(article => ({
+                title: article.title,
+                summary: article.description,
+                date: article.publishedAt.split('T')[0],
+                url: article.url // For clickable full article
+            }));
+            renderNews(formattedStories);
+        } else {
+            renderNews(fallbackCollection, true);
+        }
+    })
+    .catch(() => renderNews(fallbackCollection, true));
+</script>
+</body>
+</html>
