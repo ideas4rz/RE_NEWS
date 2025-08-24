@@ -28,7 +28,7 @@
 <script>
 // 1️⃣ Insert your keys here
 const keys = {
-  newsapi   : 'b2e5424f62294ae49339359f6c76a7a7',
+   // newsapi   : 'b2e5424f62294ae49339359f6c76a7a7', // Remove or comment this out
   gnews     : '9dd49b0673e8c206c0851efefcaea92e',
   mediastack: 'f04b77ddf92e5b4d764d3092184270e6'
 };
@@ -48,7 +48,7 @@ const endpoints = [
   },
   {
     name: 'NewsAPI',
-    url : `https://newsapi.org/v2/everything?q=${query}&language=en&apiKey=${keys.newsapi}&pageSize=4`
+    url : '/.netlify/functions/newsapi-proxy?q=' + query  // This calls your secure function
   }
 ];
 
@@ -153,3 +153,4 @@ Promise.all(endpoints.map(fetchJSON))
 </script>
 </body>
 </html>
+
