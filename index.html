@@ -49,7 +49,7 @@ const fallbackCollection = [
 const apiKey = 'b2e5424f62294ae49339359f6c76a7a7'; // Paste your key here
 const query = 'real estate Bengaluru India'; // Customize as needed
 const baseUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&language=en&sortBy=publishedAt&apiKey=${apiKey}&pageSize=5`;
-const apiUrl = `https://cors-anywhere.herokuapp.com/${baseUrl}`; // More reliable proxy for testing
+const apiUrl = `https://corsproxy.io/?${encodeURIComponent(baseUrl)}`; // New reliable proxy
 
 // Render function
 function renderNews(stories, isFallback = false) {
