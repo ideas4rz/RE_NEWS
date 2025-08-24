@@ -16,6 +16,11 @@
  .footer a{color:#0d6efd;text-decoration:none}
  .footer a:hover{text-decoration:underline}
  .error{color:#dc3545;text-align:center;margin-bottom:10px}
+ .api-label{font-size:11px;color:#fff;padding:2px 6px;border-radius:4px;margin-right:5px;display:inline-block;vertical-align:middle}
+ .gnews{background:#28a745} /* Green for GNews */
+ .mediastack{background:#007bff} /* Blue for Mediastack */
+ .newsapi{background:#dc3545} /* Red for NewsAPI */
+ .fallback{background:#6c757d} /* Gray for Fallback */
 </style>
 </head>
 <body>
@@ -53,13 +58,15 @@ const fallbackStories = [
     title  : 'Welspun One Acquires 107 Acres in Bengaluru for Warehousing Expansion',
     summary: 'Welspun One Logistics Parks acquired 51 acres in Hoskote and 56 acres in Devanahalli, Bengaluru, with a $250 million investment to develop warehousing space.',
     date   : '2025-08-20',
-    url    : 'https://www.hindustantimes.com/real-estate/welspun-one-acquires-107-acres-in-bengaluru-to-expand-warehousing-footprint-in-south-india-101755704549777.html'
+    url    : 'https://www.hindustantimes.com/real-estate/welspun-one-acquires-107-acres-in-bengaluru-to-expand-warehousing-footprint-in-south-india-101755704549777.html',
+    api    : 'Fallback'
   },
   {
     title  : 'Aawas Yojana Mission to Unlock Idle Housing Inventory',
     summary: 'Government initiative aims to unlock ₹5 lakh crore of idle housing by 2030, creating 1.5 crore jobs and ₹30,000 crore in revenues.',
     date   : '2025-08-24',
-    url    : 'https://www.einpresswire.com/calendar/2025/08/24'
+    url    : 'https://www.einpresswire.com/calendar/2025/08/24',
+    api    : 'Fallback'
   }
 ];
 
@@ -79,11 +86,11 @@ async function fetchJSON(endpoint){
 function toStory(api,raw){
   switch(api){
     case 'GNews':
-      return {title:raw.title,summary:raw.description,date:raw.publishedAt?.slice(0,10),url:raw.url};
+      return {title:raw.title,summary:raw.description,date:raw.publishedAt?.slice(0,10),url:raw.url,api};
     case 'Mediastack':
-      return {title:raw.title,summary:raw.description,date:raw.published_at?.slice(0,10),url:raw.url};
+      return {title:raw.title,summary:raw.description,date:raw.published_at?.slice(0,10),url:raw.url,api};
     case 'NewsAPI':
-      return {title:raw.title,summary:raw.description,date:raw.publishedAt?.slice(0,10),url:raw.url};
+      return {title:raw.title,summary:raw.description,date:raw.publishedAt?.slice(0,10),url:raw.url,api};
     default: return null;
   }
 }
@@ -121,11 +128,15 @@ function render(list,isFallback=false){
   list.forEach(s=>{
     const card = document.createElement('div');
     card.className='card';
+    const apiClass = s.api.toLowerCase().replace(/\s+/g,'');
     card.innerHTML = `
       <div class=\"title\">${s.title}</div>
       <div class=\"summary\">${s.summary||'No summary available.'}</div>
       <div class=\"date\">Date: ${s.date||'—'}</div>
-      <div class=\"footer\"><a href=\"${s.url}\" target=\"_blank\" rel=\"noopener\">Read full article</a></div>
+      <div class=\"footer\">
+        <span class=\"api-label ${apiClass}\">From: ${s.api}</span>
+        <a href=\"${s.url}\" target=\"_blank\" rel=\"noopener\">Read full article</a>
+      </div>
     `;
     c.appendChild(card);
   });
